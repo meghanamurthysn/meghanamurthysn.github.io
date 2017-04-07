@@ -1,0 +1,26 @@
+university_name,world_rank,country,teaching,international,research,citations,income,num_students,student_staff_ratio,intnl_students
+California Institute of Technology,1,United States of America,95.6,64,97.6,99.8,97.8,2243,6.9,27
+University of Oxford,2,United Kingdom,86.5,94.4,98.9,98.8,73.1,19919,11.6,34
+Stanford University,3,United States of America,92.5,76.3,96.2,99.9,63.3,15596,7.8,22
+University of Cambridge,4,United Kingdom,88.2,91.5,96.7,97,55,18812,11.8,34
+Massachusetts Institute of Technology,5,United States of America,89.4,84,88.6,99.7,95.4,11074,9,33
+Harvard University,6,United States of America,83.6,77.2,99,99.8,45.2,20152,8.9,25
+Princeton University,7,United States of America,85.1,78.5,91.9,99.3,52.1,7929,8.4,27
+Imperial College London,8,United Kingdom,83.3,96,88.5,96.7,53.7,15060,11.7,51
+ETH Zurich _Ü_ Swiss Federal Institute of Technology Zurich,9,Switzerland,77,97.9,95,91.1,80,18178,14.7,37
+University of Chicago,10,United States of America,85.7,65,88.9,99.2,36.6,14221,6.9,21
+Johns Hopkins University,11,United States of America,77.6,70,90.4,98.2,100,15128,3.6,23
+Yale University,12,United States of America,86.5,64.3,87.8,97.2,43.3,11751,4.4,0.2
+"University of California, Berkeley",13,United States of America,80.4,61.9,91.1,99.7,47.9,36186,16.4,15
+University College London,14,United Kingdom,78.1,94.4,91,94.2,40.5,26607,10.7,46
+Columbia University,15,United States of America,85.9,73.5,82.2,98.1,56.12,25055,5.9,28
+"University of California, Los Angeles",16,United States of America,80.8,56.4,88.6,98.5,47.9,38206,10.3,15
+University of Pennsylvania,17,United States of America,82,49.5,86.9,98.6,47.9,20376,6.5,0.2
+Cornell University,18,United States of America,77.9,63.9,86.1,97.2,33.7,21424,10.2,19
+University of Toronto,19,Canada,75.9,77.8,89.3,90.9,49.1,66198,19.5,15
+Duke University,20,United States of America,76,56.5,78,99,100,15172,4.8,17
+University of Michigan,21,United States of America,76.8,53.7,85.2,94.4,56.3,41786,9,16
+Carnegie Mellon University,22,United States of America,67.4,57.1,88.8,99.1,57.5,11885,13.1,35
+London School of Economics and Political Science,23,United Kingdom,69.8,93.6,80.6,94.3,32.2,18326,14.5,28.7
+University of Edinburgh,24,United Kingdom,68.6,89.8,77.2,96.3,36.1,25774,14.1,36
+Northwestern University,25,United States of America,69.8,53.9,78.4,96.5,81.2,18334,13.8,15

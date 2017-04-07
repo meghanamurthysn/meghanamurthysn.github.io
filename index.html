@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <!-- Include Twitter Bootstrap and jQuery: -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+     
+    <!-- Include the plugin's CSS and JS: -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css"/>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+    <link rel="stylesheet" href="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.css">
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <!--<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>-->
+    <script src="https://rawgit.com/alangrafu/radar-chart-d3/master/src/radar-chart.min.js"></script>
+    <script type="text/javascript" src="js/radar-chart.js"></script>
+
+
+      
+    <!--<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet" type="text/css" />
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="http://davidstutz.github.io/bootstrap-multiselect/dist/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="http://davidstutz.github.io/bootstrap-multiselect/dist/css/bootstrap-multiselect.css" type="text/css"/>-->
+
+
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">D3 Assignment</a>
+        </div>
+        <div class="nav navbar-brand">
+          <select class="btn btn-info" id='one' data-style="btn-info" onchange='onchange_years()'></select>
+          <select class="btn btn-group" id="yo" data-style="btn-group" data-live-search="true" multiple= "multiple" data-action = "1"></select>
+        </div>
+        
+      </div>
+    </nav>
+    <style>
+    body {
+      padding: 50px;
+    }
+    </style>
+
+    <!-- <style>
+    .radar-chart .area {
+      fill-opacity: 0.7;
+    }
+    .radar-chart.focus .area {
+      fill-opacity: 0.3;
+    }
+    .radar-chart.focus .area.focused {
+      fill-opacity: 0.9;
+    }
+    .area.UniversityofToronto, .UniversityofToronto .circle {
+      fill: #F0DFAD;
+      stroke: none;
+    }
+    .area.UniversityofMassachusetts, .UniversityofMassachusetts .circle {
+      fill: #7EA8BE;
+      stroke: none;
+    }
+    .area.ArizonaStateUniversity, .ArizonaStateUniversity .circle {
+      fill: #C6878F;
+      stroke: none;
+    }
+
+    </style> -->
+
+    <script>
+
+    var colorArray = [];
+    var colorDict = {};
+    var finalData = [];
+
+    
+    RadarChart.defaultConfig.color = function(i) {c = colorArray ; return c[i];};
+    RadarChart.defaultConfig.tooltipFormatClass = function(d){
+    var tt = String(d.className) + "\n" + String(d.axes[0].axis) + ":" + String(d.axes[0].value) + "\n" + String(d.axes[2].axis) + ":" + String(d.axes[2].value) + "\n" + String(d.axes[3].axis) + ":" + String(d.axes[3].value);
+    return tt;
+  };
+    RadarChart.defaultConfig.radius = 3;
+    RadarChart.defaultConfig.w = 800;
+    RadarChart.defaultConfig.h = 800;
+    RadarChart.defaultConfig.levels = 10;
+
+    var chart = RadarChart.chart();
+    var cfg = chart.config(); // retrieve default config
+    var svg = d3.select('body').append('svg').classed('svg', 1).attr('width', cfg.w + 50).attr('height', cfg.h + cfg.h / 4);
+    var colorIndex = 0;
+    </script>
+    <!-- Initialize the plugin: -->
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#yo').multiselect();
+        });
+    </script>
+
+
+    <script>
+
+    
+//     //var years = ['2011','2012','2013','2014','2015','2016'];
+    var years = ['2014','2015','2016'];
+
+    years.unshift('Choose Year (Default 2016)');
+
+    year_change('2016');
+
+    var select_years = d3.select('select');
+    var options_years = select_years
+      .selectAll('option')
+      .data(years).enter()
+      .append('option')
+      .text(function (d) { return d; });
+
+    function onchange_years() {
+      $('option', $('#yo')).each(function(element) {
+      $(this).removeAttr('selected').prop('selected', false);
+    });
+    $("#yo").multiselect('refresh');
+
+      selectValue_years = d3.select('select').property('value')
+      year_change(selectValue_years);
+
+    }
+    $(document).ready(function() {
+    for (i=0; i<200; i++)
+      colorArray.push("#" + ((1 << 24) * Math.random() | 0).toString(16))
+  });
+
+     function year_change(year){
+
+      var y = 'rnew' + year + '.csv';
+    // load csv file and create the chart
+    d3.csv(y, function(data) {
+    var firstCell = data.map(function(d){return d3.values(d)[0]});
+    var textLength = 0;
+    firstCell.forEach(function(d){
+      if (d.length > textLength) textLength = d.length;
+    });
+    //var grid = d3.divgrid();
+
+    var data1 = data.map(function(p) {return p['university_name'];});
+
+    //data1.unshift('Top 10');
+    // data1.unshift('Choose a Filter');
+
+      
+    // var select = d3.select('body')
+    //   .append('select')
+    //     .attr('class','select')
+    //     .on('change',onchange)
+
+    //var grid_dom = document.getElementById('grid');
+    //grid_dom.innerHTML='';
+
+    document.getElementById("yo").innerHTML='';
+
+    var select = d3.select(document.getElementById("yo"));
+
+    var options = select
+      .selectAll('option')
+      .data(data1).enter()
+      .append('option')
+        .text(function (d) { return d; });
+
+    //select.on('change',onchange);
+
+    //Default universities on load of the page
+    var def = ["California Institute of Technology","University of Oxford","Stanford University"];
+    $("#yo").val(def);
+    $("#yo").multiselect('refresh');
+    global = def;
+    // global1 = []
+    var radar_data = [];
+    var dict = {};
+    d3.select('body')
+    .append('p')
+    // j=0;
+    data.forEach(function(p,i) {
+      if(global.includes(p['university_name'])){
+        // global1[j] = i
+        // j=j+1;
+        dict[data[i]["university_name"]] = i; 
+        var _object = {};
+        _object.className = String(data[i]["university_name"]);
+        axes_list = []
+        console.log(data[i]);
+        axes_list.push({ axis: "teaching", value: parseFloat(data[i]["teaching"])});
+        axes_list.push({ axis: "international", value: parseFloat(data[i]["international"])});
+        axes_list.push({ axis: "income", value: parseFloat(data[i]["income"])});
+        axes_list.push({ axis: "research", value: parseFloat(data[i]["research"])});
+        axes_list.push({ axis: "world rank", value: parseFloat((200 - data[i]["world_rank"])/2)});
+        _object.axes = axes_list
+        radar_data.push(_object)
+      }
+      // if ($.inArray(p['university_name'], global)){
+      //   console.log(p['university_name'])
+      //   global1 = i;
+      // }
+    });
+    addRadar(radar_data);
+
+
+
+    $('#yo').change(function(){
+    var arr = $(this).val()
+    if(arr.length > 0){
+    this.setAttribute("data-action", "2");
+  }
+  else{
+    this.setAttribute("data-action", "1");
+  }
+    global = arr;
+    global1 = []
+    var radar_data = [];
+    var dict = {};
+    d3.select('body')
+    .append('p')
+    j=0;
+    if(this.getAttribute("data-action")=="2"){
+    data.forEach(function(p,i) {
+      if(global.includes(p['university_name'])){
+        global1[j] = i
+        j=j+1;
+        dict[data[i]["university_name"]] = i; //storing key value pair of country name and index for searches
+        var _object = {};
+        _object.className = String(data[i]["university_name"]);
+        axes_list = []
+        console.log(data[i]);
+        axes_list.push({ axis: "teaching", value: parseFloat(data[i]["teaching"])});
+        axes_list.push({ axis: "international", value: parseFloat(data[i]["international"])});
+        axes_list.push({ axis: "income", value: parseFloat(data[i]["income"])});
+        axes_list.push({ axis: "research", value: parseFloat(data[i]["research"])});
+        axes_list.push({ axis: "world rank", value: parseFloat((200 - data[i]["world_rank"])/2)});
+        _object.axes = axes_list
+        radar_data.push(_object)
+        console.log(radar_data)
+      }
+      // if ($.inArray(p['university_name'], global)){
+      //   console.log(p['university_name'])
+      //   global1 = i;
+      // }
+    });
+    addRadar(radar_data);
+  }
+  else{
+    univs = [];
+    removeRadar(radar_data);
+  }
+});
+
+    function addRadar(univs){
+      svg.selectAll("g").remove();
+      svg.append('g').datum(univs).call(chart);
+    }
+
+    function removeRadar(univs){
+        $('option', $('#yo')).each(function(element) {
+        $(this).removeAttr('selected').prop('selected', false);
+      });
+      $("#yo").multiselect('refresh');
+      addRadar(univs);
+    }
+
+    function onchange (){
+      var e = document.getElementById("yo")
+      selectValue = d3.select(e).property('value')
+      console.log(selectValue)
+      $(selectValue ).each(function( index ) {
+      console.log( index + ": " + $( this ).val() );
+      });
+      var arr = $(this).val()
+      console.log(arr);
+      global = selectValue;
+      d3.select('body')
+        .append('p')
+
+      data.forEach(function(p,i) {
+
+      if (p['university_name'] === global){
+        global1 = i;
+      }
+    });
+
+      /*if (selectValue === 'Top 10'){
+        d3.select("#grid")
+        .datum(data.slice(0,10))
+        // .datum(global1)
+        .call(grid)
+        .selectAll(".row")
+        .on({
+          "mouseover": function(d) { parcoords.highlight([d]) },
+          "mouseout": parcoords.unhighlight
+        });
+      }*/
+
+      /*else{
+
+      d3.select("#grid")
+        .datum(data.slice(global1,global1+1))
+        // .datum(global1)
+        .call(grid)
+        .selectAll(".row")
+        .on({
+          "mouseover": function(d) { parcoords.highlight([d]) },
+          "mouseout": parcoords.unhighlight
+        });
+      }*/
+
+    }
+      
+      
+    });
+
+
+    }
+
+
+    // var data = [
+    //   {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 32.4},
+    //       {axis: "international", value: 31.9},  
+    //       {axis: "income", value: 32},
+    //       {axis: "research", value: 38.1},  
+    //       {axis: "total score", value: (200-189)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 75.9},
+    //       {axis: "international", value: 77.8},  
+    //       {axis: "income", value: 49.1},  
+    //       {axis: "research", value: 89.3},
+    //       {axis: "total score", value: (200-19)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 40.2},
+    //       {axis: "international", value: 48.9},  
+    //       {axis: "income", value: 52.2},
+    //       {axis: "research", value: 36.3},  
+    //       {axis: "total score", value: (200-141)/2}
+    //     ]
+    //   }
+      
+    // ];
+
+    // var dataYearly = [[
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 75.8},
+    //       {axis: "international", value: 0},
+    //       {axis: "income", value: 0},
+    //       {axis: "research", value: 87.9}, 
+    //       {axis: "world rank", value: (200-17)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 61.3},
+    //       {axis: "international", value: 22.6},
+    //       {axis: "income", value: 53.9},
+    //       {axis: "research", value: 72.6},   
+    //       {axis: "total score", value: (200-56)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 43.0},
+    //       {axis: "international", value: 24.1}, 
+    //       {axis: "income", value: 0},  
+    //       {axis: "research", value: 44.1}, 
+    //       {axis: "total score", value: (200-161)/2}
+    //     ]
+    //   },
+
+    // ], [
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 76.9},
+    //       {axis: "international", value: 69.0},  
+    //       {axis: "income", value: 44.9},
+    //       {axis: "research", value: 87.4},  
+    //       {axis: "total score", value: (200-19)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 54.0},
+    //       {axis: "international", value: 27.3},  
+    //       {axis: "income", value: 53.2},
+    //       {axis: "research", value: 58.3},  
+    //       {axis: "total score", value: (200-64)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 38.2},
+    //       {axis: "international", value: 26.1},  
+    //       {axis: "income", value: 28.7},
+    //       {axis: "research", value: 39.0},  
+    //       {axis: "total score", value: (200-127)/2}
+    //     ]
+    //   },
+
+    // ], [
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 79.6},
+    //       {axis: "international", value: 65.1},  
+    //       {axis: "income", value: 42.9},
+    //       {axis: "research", value: 89.4},  
+    //       {axis: "total score", value: (200-21)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 57.1},
+    //       {axis: "international", value: 31.7},  
+    //       {axis: "income", value: 52.8},
+    //       {axis: "research", value: 62.6},  
+    //       {axis: "total score", value: (200-72)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 38.4},
+    //       {axis: "international", value: 27.4},  
+    //       {axis: "income", value: 31.8},
+    //       {axis: "research", value: 45.2},  
+    //       {axis: "total score", value: (200-148)/2}
+    //     ]
+    //   },
+
+    // ], [
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 73.6},
+    //       {axis: "international", value: 70.0},  
+    //       {axis: "income", value: 45.8},
+    //       {axis: "research", value: 81.5},  
+    //       {axis: "total score", value: (200-20)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 40.7},
+    //       {axis: "international", value: 33.1},  
+    //       {axis: "income", value: 52.0},
+    //       {axis: "research", value: 38.9},  
+    //       {axis: "total score", value: (200-132)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 33.8},
+    //       {axis: "international", value: 28.6},  
+    //       {axis: "income", value: 31.4},
+    //       {axis: "research", value: 35.9},  
+    //       {axis: "total score", value: (200-146)/2}
+    //     ]
+    //   },
+
+    // ], [
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 74.4},
+    //       {axis: "international", value: 71.2},  
+    //       {axis: "income", value: 46.1},
+    //       {axis: "research", value: 85.1},  
+    //       {axis: "total score", value: (200-20)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 44.8},
+    //       {axis: "international", value: 40.3},  
+    //       {axis: "income", value: 52.8},
+    //       {axis: "research", value: 49.1},  
+    //       {axis: "total score", value: (200-91)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 35.7},
+    //       {axis: "international", value: 29.5},  
+    //       {axis: "income", value: 32.6},
+    //       {axis: "research", value: 37.5},  
+    //       {axis: "total score", value: (200-182)/2}
+    //     ]
+    //   },
+
+    // ], [
+    //   {
+    //     className: 'UniversityofToronto', // optional, can be used for styling
+    //     axes: [
+    //       {axis: "teaching", value: 75.9},
+    //       {axis: "international", value: 77.8},  
+    //       {axis: "income", value: 49.1},
+    //       {axis: "research", value: 89.3},  
+    //       {axis: "total score", value: (200-19)/2}
+    //     ]
+    //   },
+    //   {
+    //     className: 'UniversityofMassachusetts',
+    //     axes: [
+    //       {axis: "teaching", value: 40.2},
+    //       {axis: "international", value: 48.9},  
+    //       {axis: "income", value: 52.2},
+    //       {axis: "research", value: 36.3},  
+    //       {axis: "total score", value: (200-141)/2}
+    //     ]
+    //   },
+    //     {
+    //     className: 'ArizonaStateUniversity',
+    //     axes: [
+    //       {axis: "teaching", value: 32.4},
+    //       {axis: "international", value: 31.9},  
+    //       {axis: "income", value: 32},
+    //       {axis: "research", value: 38.1},  
+    //       {axis: "total score", value: (200-189)/2}
+    //     ]
+    //   },
+
+    // ]];
+
+    // var k = 0;
+
+    // function yearlyDataset(k) {
+    //     return dataYearly[k].map(function(d) {
+    //       return {
+    //         className: d.className,
+    //         axes: d.axes.map(function(axis) {
+    //           a = {axis: axis.axis, value: axis.value};
+    //           return a;
+    //         })
+    //       };
+    //     });
+    //   }
+
+    </script>
+
+   <!--  <script>
+    var chart = RadarChart.chart();
+    var cfg = chart.config(); // retrieve default config
+    var svg = d3.select('body').append('svg')
+      .attr('width', cfg.w + cfg.w + 50)
+      .attr('height', cfg.h + cfg.h / 5);
+    svg.append('g').classed('single', 1).datum(data).call(chart);
+
+    chart.config({w: cfg.w / 2, h: cfg.h / 2, axisText: false, levels: 0, circles: false});
+    cfg = chart.config();
+    function render() {
+      var game = svg.selectAll('g.game').data(
+        [
+            yearlyDataset(k)
+        ]
+      );
+      game.enter().append('g').classed('game', 1);
+      game
+        .attr('transform', function(d, i) { return 'translate('+((cfg.w * 2) + 50 + (i * cfg.w))+','+ (cfg.h * 0.5) +')'; })
+        .call(chart);
+
+      setTimeout(render, 1000);
+      if(k<5){
+        k = k+1;}
+        else {
+          k=0;
+        }
+    }
+    render();
+    </script> -->
+  </body>
+</html>
+

@@ -1,0 +1,26 @@
+university_name,world_rank,country,teaching,international,research,citations,income,num_students,student_staff_ratio,intnl_students
+California Institute of Technology,1,United States of America,94.4,65.8,98.2,99.8,91.2,2243,6.9,27
+Harvard University,2,United States of America,95.3,66.2,98.5,99.1,40.6,20152,8.9,25
+University of Oxford,2,United Kingdom,89,90.2,98.5,95.4,90.3,19919,11.6,34
+Stanford University,4,United States of America,94.7,68,96.8,99.1,61.3,15596,7.8,22
+Massachusetts Institute of Technology,5,United States of America,92.9,82,89,100,94.3,11074,9,33
+Princeton University,6,United States of America,89.9,59.6,97.6,99.7,80.5,7929,8.4,27
+University of Cambridge,7,United Kingdom,90.6,86.7,95.3,95.7,52.8,18812,11.8,34
+"University of California, Berkeley",8,United States of America,83.2,57.3,97.5,99.3,59.5,36186,16.4,15
+University of Chicago,9,United States of America,85.6,58.6,88.2,98,54.92,14221,6.9,21
+Imperial College London,10,United Kingdom,84.5,91.8,88.1,90,72.3,15060,11.7,51
+Yale University,11,United States of America,89.5,57.6,90.5,93.5,38.7,11751,4.4,20
+"University of California, Los Angeles",12,United States of America,84.8,46.4,91,95.6,54.92,38206,10.3,15
+Columbia University,13,United States of America,86.6,68,79.1,95.6,54.92,25055,5.9,28
+ETH Zurich _ба Swiss Federal Institute of Technology Zurich,14,Switzerland,77.6,96.7,88.2,85,78.8,18178,14.7,37
+Johns Hopkins University,15,United States of America,75.7,59.3,85.1,95,100,15128,3.6,23
+University of Pennsylvania,16,United States of America,79.8,40.6,81.2,95,45.2,20376,6.5,20
+Duke University,17,United States of America,73.9,50,73,96.7,100,15172,4.8,17
+University of Michigan,18,United States of America,70,49.5,86.2,90.8,53.5,41786,9,16
+Cornell University,19,United States of America,72.1,55.6,83.8,90.8,35.8,21424,10.2,19
+University of Toronto,20,Canada,73.6,70,81.5,84.5,45.8,66198,19.5,15
+University College London,21,United Kingdom,70.5,90.2,77.5,84.1,46.8,26607,10.7,46
+Northwestern University,22,United States of America,70.2,34.4,76,97.1,61.9,18334,13.8,15
+University of Tokyo,23,Japan,84.7,29.6,88,69.8,56.7,26199,5.7,10
+Carnegie Mellon University,24,United States of America,63.1,58.1,77.4,93.9,52.5,11885,13.1,35
+University of Washington,25,United States of America,65.6,43.2,69.2,95.6,43.1,44020,11.8,13
