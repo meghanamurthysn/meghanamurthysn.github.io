@@ -52,7 +52,7 @@ var RadarChart = {
         .classed('visible', 1).attr("x", 0)
         .attr("x", bbox.x - padding)
         .attr("y", bbox.y - padding)
-        .attr("width", bbox.width + (padding*100))
+        .attr("width", bbox.width + (padding*2))
         .attr("height", bbox.height + (padding*2))
         .attr("rx","5").attr("ry","5")
         .style("fill", cfg.backgroundTooltipColor).style("opacity", cfg.backgroundTooltipOpacity);
